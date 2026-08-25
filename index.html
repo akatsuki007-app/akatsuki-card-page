@@ -372,27 +372,29 @@
 </div>
 
 <script>
-  let currentAvatarBase64 = ''; // Base64 avatar data hold karne ke liye
+  let currentAvatarBase64 = ''; 
 
-  // 1. Image ko Local Preview + Base64 format me convert karein
   function loadAvatar(event) {
     const file = event.target.files[0];
     if (file) {
+      // Image Size Check (Max 2MB file allowed to prevent server crash)
+      if (file.size > 2 * 1024 * 1024) {
+        alert("Kripya 2MB se kam size ki image select karein!");
+        return;
+      }
       const reader = new FileReader();
       reader.onload = function(e) {
-        currentAvatarBase64 = e.target.result; // Complete Base64 string
+        currentAvatarBase64 = e.target.result;
         document.querySelector('.avatar-container img').src = currentAvatarBase64;
       };
       reader.readAsDataURL(file);
     }
   }
 
-  // 2. Barcode text update karein
   function updateBarcode(val) {
     document.getElementById('barcode-text').innerText = 'FFID-' + val;
   }
 
-  // 3. Database se UID ke zariye data fetch karne ka function
   async function fetchFromDatabase() {
     const inputs = document.querySelectorAll('.input-box');
     const uidInput = inputs[1].value.trim();
@@ -405,7 +407,13 @@
     const API_URL = `https://ff-player-card.onrender.com/api/player/${uidInput}`;
 
     try {
-      const response = await fetch(API_URL);
+      const response = await fetch(API_URL, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
       const result = await response.json();
 
       if (result.success) {
@@ -426,15 +434,14 @@
         alert('Is UID ka koi data database me nahi mila!');
       }
     } catch (error) {
-      console.error(error);
-      alert('Backend se connect karne me error aaya!');
+      console.error('FETCH ERROR:', error);
+      alert('Backend se connect karne me error aaya! Details console me dekhein.');
     }
   }
 
-  // 4. Database me data save karne ka function
   async function saveToDatabase() {
     const inputs = document.querySelectorAll('.input-box');
-    const avatarImgSrc = document.querySelector('.avatar-container img').src;
+    const defaultImgSrc = 'https://static.wikia.nocookie.net/garena-freefire/images/7/73/Primis.jpg/revision/latest?cb=20210805064555';
 
     const playerData = {
       playerName: inputs[0].value,
@@ -442,7 +449,8 @@
       region: inputs[2].value,
       level: Number(inputs[3].value),
       elitePass: inputs[4].value,
-      avatarUrl: currentAvatarBase64 || avatarImgSrc
+      // Direct blob link bhejne ki jagah base64 ya default URL bhejein
+      avatarUrl: currentAvatarBase64 ? currentAvatarBase64 : defaultImgSrc
     };
 
     const API_URL = 'https://ff-player-card.onrender.com/api/player/save';
@@ -450,34 +458,34 @@
     try {
       const response = await fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify(playerData)
       });
 
       const result = await response.json();
       if (result.success) {
-        alert('Data aur Image MongoDB Atlas me successfully save ho gaye!');
+        alert('Data MongoDB Atlas me successfully save ho gaya!');
       } else {
-        alert('Error: ' + result.error);
+        alert('Error: ' + (result.error || result.message));
       }
     } catch (error) {
-      console.error(error);
-      alert('Backend API se connection fail ho gaya!');
+      console.error('SAVE ERROR:', error);
+      alert('Backend API se connection fail ho gaya! Server ya network error check karein.');
     }
   }
 
-  // 5. Card form clear karne ka function
   function clearCardForm() {
     const inputs = document.querySelectorAll('.input-box');
-
     inputs.forEach(input => input.value = '');
     currentAvatarBase64 = '';
-    
-    // Default Primis avatar set karein
     document.querySelector('.avatar-container img').src = 'https://static.wikia.nocookie.net/garena-freefire/images/7/73/Primis.jpg/revision/latest?cb=20210805064555';
     document.getElementById('barcode-text').innerText = 'FFID-';
   }
 </script>
+
  
 
 </body>
