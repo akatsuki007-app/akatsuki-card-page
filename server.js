@@ -5,8 +5,10 @@ const cors = require('cors');
 const app = express();
 
 // Middlewares
-app.use(express.json());
-app.use(cors());
+// Express middleware size limit increase karein
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
 // server.js me app.use(cors()); ke neeche ye add karein:
 
 app.get('/', (req, res) => {
