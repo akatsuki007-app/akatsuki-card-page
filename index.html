@@ -372,32 +372,27 @@
 </div>
 
 <script>
- // Card Form Clear karne ka function
-function clearCardForm() {
-  const inputs = document.querySelectorAll('.input-box');
+  let currentAvatarBase64 = ''; // Base64 avatar data hold karne ke liye
 
-  // Saari Input Fields Khali (Blank) Karein
-  inputs.forEach(input => input.value = '');
-
-  // Default Primis Avatar Image Set Karein
-  document.querySelector('.avatar-container img').src = 'https://static.wikia.nocookie.net/garena-freefire/images/7/73/Primis.jpg/revision/latest?cb=20210805064555';
-
-  // Barcode Text Reset Karein
-  document.getElementById('barcode-text').innerText = 'FFID-';
-}
- 
+  // 1. Image ko Local Preview + Base64 format me convert karein
   function loadAvatar(event) {
-    const container = document.querySelector('.avatar-container');
     const file = event.target.files[0];
     if (file) {
-      container.querySelector('img').src = URL.createObjectURL(file);
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        currentAvatarBase64 = e.target.result; // Complete Base64 string
+        document.querySelector('.avatar-container img').src = currentAvatarBase64;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
+  // 2. Barcode text update karein
   function updateBarcode(val) {
     document.getElementById('barcode-text').innerText = 'FFID-' + val;
   }
 
+  // 3. Database se UID ke zariye data fetch karne ka function
   async function fetchFromDatabase() {
     const inputs = document.querySelectorAll('.input-box');
     const uidInput = inputs[1].value.trim();
@@ -415,13 +410,14 @@ function clearCardForm() {
 
       if (result.success) {
         const player = result.data;
-        inputs[0].value = player.playerName;
-        inputs[2].value = player.region;
-        inputs[3].value = player.level;
-        inputs[4].value = player.elitePass;
+        inputs[0].value = player.playerName || '';
+        inputs[2].value = player.region || '';
+        inputs[3].value = player.level || '';
+        inputs[4].value = player.elitePass || '';
 
         if (player.avatarUrl) {
           document.querySelector('.avatar-container img').src = player.avatarUrl;
+          currentAvatarBase64 = player.avatarUrl;
         }
 
         updateBarcode(player.uid);
@@ -435,8 +431,10 @@ function clearCardForm() {
     }
   }
 
+  // 4. Database me data save karne ka function
   async function saveToDatabase() {
     const inputs = document.querySelectorAll('.input-box');
+    const avatarImgSrc = document.querySelector('.avatar-container img').src;
 
     const playerData = {
       playerName: inputs[0].value,
@@ -444,7 +442,7 @@ function clearCardForm() {
       region: inputs[2].value,
       level: Number(inputs[3].value),
       elitePass: inputs[4].value,
-      avatarUrl: document.querySelector('.avatar-container img').src
+      avatarUrl: currentAvatarBase64 || avatarImgSrc
     };
 
     const API_URL = 'https://ff-player-card.onrender.com/api/player/save';
@@ -458,7 +456,7 @@ function clearCardForm() {
 
       const result = await response.json();
       if (result.success) {
-        alert('Data MongoDB Atlas me successfully save ho gaya!');
+        alert('Data aur Image MongoDB Atlas me successfully save ho gaye!');
       } else {
         alert('Error: ' + result.error);
       }
@@ -467,7 +465,20 @@ function clearCardForm() {
       alert('Backend API se connection fail ho gaya!');
     }
   }
+
+  // 5. Card form clear karne ka function
+  function clearCardForm() {
+    const inputs = document.querySelectorAll('.input-box');
+
+    inputs.forEach(input => input.value = '');
+    currentAvatarBase64 = '';
+    
+    // Default Primis avatar set karein
+    document.querySelector('.avatar-container img').src = 'https://static.wikia.nocookie.net/garena-freefire/images/7/73/Primis.jpg/revision/latest?cb=20210805064555';
+    document.getElementById('barcode-text').innerText = 'FFID-';
+  }
 </script>
+ 
 
 </body>
 </html>
