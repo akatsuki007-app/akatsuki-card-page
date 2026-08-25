@@ -7,6 +7,11 @@ const app = express();
 // Middlewares
 app.use(express.json());
 app.use(cors());
+// server.js me app.use(cors()); ke neeche ye add karein:
+
+app.get('/', (req, res) => {
+  res.send('Free Fire Player Card API is Running Successfully!');
+});
 
 // Same Directory Se Schema Import
 const Player = require('./Player');
