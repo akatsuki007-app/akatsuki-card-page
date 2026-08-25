@@ -1,0 +1,15 @@
+{
+  "name": "ff-player-card",
+  "version": "1.0.0",
+  "description": "Free Fire Player Card with MongoDB Atlas integration",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^7.0.0"
+  }
+}
