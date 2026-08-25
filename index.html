@@ -209,6 +209,421 @@
     margin-top: 2px;
   }
 
+  /* Button Actions Container */
+  .btn-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .action-btn {
+    flex: 1;
+    padding: 12px;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+  .fetch-btn {
+    background: #2563eb;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+  }
+  .save-btn {
+    background: #dc2626;
+    box-shadow: 0 4px 10px rgba(220, 38, 38, 0.3);
+  }
+  .action-btn:hover {
+    opacity: 0.9;
+  }
+
+  @media (max-width: 520px) {
+    .card {
+      padding: 16px;
+      border-radius: 20px;
+    }
+    .content {
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .avatar-container {
+      width: 180px;
+      max-width: 100%;
+    }
+    .details {
+      width: 100%;
+      gap: 10px;
+    }
+    .field-row {
+      padding-bottom: 4px;
+    }
+    .footer {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 8px;
+    }
+    .barcode-box {
+      text-align: center;
+    }
+    .flag-box {
+      width: 70px;
+      height: 24px;
+    }
+    .btn-container {
+      flex-direction: column;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <!-- Header -->
+  <div class="header">
+    <div class="flag-box">
+      <div class="chakra"></div>
+    </div>
+    <div class="title">FREE FIRE</div>
+    <div class="sub-logo">⚡ FF IDENTITY</div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <div class="avatar-container" onclick="document.getElementById('avatar-input').click()">
+      <img src="https://static.wikia.nocookie.net/garena-freefire/images/7/73/Primis.jpg/revision/latest?cb=20210805064555" alt="Primis Character">
+      <div class="avatar-hint">📷 Tap to Change</div>
+      <input type="file" id="avatar-input" accept="image/*" onchange="loadAvatar(event)">
+    </div>
+
+    <!-- Fields -->
+    <div class="details">
+      <div class="field-row">
+        <div>
+          <div class="label">PLAYER NAME:</div>
+          <input type="text" class="input-box" value="Madara">
+        </div>
+        <div class="icon-badge">🏆</div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <div class="label">UID:</div>
+          <input type="text" class="input-box" value="696369108" oninput="updateBarcode(this.value)">
+        </div>
+        <div class="icon-badge">🛡️</div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <div class="label">REGION:</div>
+          <input type="text" class="input-box" value="INDIA">
+        </div>
+        <div class="icon-badge">🇮🇳</div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <div class="label">LEVEL:</div>
+          <input type="text" class="input-box" value="75">
+        </div>
+        <div class="icon-badge">⭐</div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <div class="label">ELITE PASS:</div>
+          <input type="text" class="input-box" value="MAX">
+        </div>
+        <div class="icon-badge">👑</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-text">
+      MY <span>FREE FIRE</span> IDENTITY
+    </div>
+    <div class="barcode-box">
+      <div class="barcode">|||| ||| ||||| |||</div>
+      <div class="barcode-id" id="barcode-text">FFID-696369108</div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="btn-container">
+    <button type="button" class="action-btn fetch-btn" onclick="fetchFromDatabase()">FETCH DATA</button>
+    <button type="button" class="action-btn save-btn" onclick="saveToDatabase()">SAVE CARD DATA</button>
+  </div>
+</div>
+
+<script>
+  function loadAvatar(event) {
+    const container = document.querySelector('.avatar-container');
+    const file = event.target.files[0];
+    if (file) {
+      container.querySelector('img').src = URL.createObjectURL(file);
+    }
+  }
+
+  function updateBarcode(val) {
+    document.getElementById('barcode-text').innerText = 'FFID-' + val;
+  }
+
+  // 1. Database Se UID Ke Zariye Data Fetch Karne Ka Function
+  async function fetchFromDatabase() {
+    const inputs = document.querySelectorAll('.input-box');
+    const uidInput = inputs[1].value.trim();
+
+    if (!uidInput) {
+      alert('Kripya pehle UID field me ID enter karein!');
+      return;
+    }
+
+    const API_URL = `https://ff-player-card.onrender.com/api/player/${uidInput}`;
+
+    try {
+      const response = await fetch(API_URL);
+      const result = await response.json();
+
+      if (result.success) {
+        const player = result.data;
+        inputs[0].value = player.playerName;
+        inputs[2].value = player.region;
+        inputs[3].value = player.level;
+        inputs[4].value = player.elitePass;
+
+        if (player.avatarUrl) {
+          document.querySelector('.avatar-container img').src = player.avatarUrl;
+        }
+
+        updateBarcode(player.uid);
+        alert('Player Data Successfully Load Ho Gaya!');
+      } else {
+        alert('Is UID ka koi data database me nahi mila!');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Backend se connect karne me error aaya!');
+    }
+  }
+
+  // 2. Database Me Data Save Karne Ka Function
+  async function saveToDatabase() {
+    const inputs = document.querySelectorAll('.input-box');
+
+    const playerData = {
+      playerName: inputs[0].value,
+      uid: inputs[1].value,
+      region: inputs[2].value,
+      level: Number(inputs[3].value),
+      elitePass: inputs[4].value,
+      avatarUrl: document.querySelector('.avatar-container img').src
+    };
+
+    const API_URL = 'https://ff-player-card.onrender.com/api/player/save';
+
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(playerData)
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        alert('Data MongoDB Atlas me successfully save ho gaya!');
+      } else {
+        alert('Error: ' + result.error);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Backend API se connection fail ho gaya!');
+    }
+  }
+</script>
+
+</body>
+</html>
+    border-bottom: 2px solid #cbd5e1;
+    padding-bottom: 12px;
+    margin-bottom: 18px;
+    gap: 10px;
+  }
+  .flag-box {
+    width: 90px;
+    height: 28px;
+    flex-shrink: 0;
+    background: linear-gradient(to bottom, #FF9933 33.3%, #FFFFFF 33.3%, #FFFFFF 66.6%, #128807 66.6%);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
+  .chakra {
+    width: 9px;
+    height: 9px;
+    border: 1.5px solid #000080;
+    border-radius: 50%;
+  }
+  .title {
+    font-size: clamp(20px, 5vw, 28px);
+    font-weight: 900;
+    color: #111827;
+    letter-spacing: 1.5px;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .sub-logo {
+    font-size: clamp(11px, 3vw, 14px);
+    font-weight: 800;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .content {
+    display: flex;
+    gap: 20px;
+  }
+
+  .avatar-container {
+    width: 220px;
+    aspect-ratio: 3 / 4;
+    height: auto;
+    background: linear-gradient(180deg, #1f2e1e 0%, #0d140d 100%);
+    border-radius: 16px;
+    border: 3px solid #2d3a2c;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .avatar-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .avatar-hint {
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 11px;
+    font-weight: bold;
+    color: #4ade80;
+    background: rgba(0,0,0,0.6);
+    padding: 3px 0;
+  }
+  #avatar-input {
+    display: none;
+  }
+
+  .details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
+  }
+  .field-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1.5px solid #cbd5e1;
+    padding-bottom: 6px;
+    gap: 6px;
+  }
+  .field-row > div:first-child {
+    flex: 1;
+    min-width: 0;
+  }
+  .label {
+    font-size: clamp(10px, 2.5vw, 13px);
+    font-weight: 900;
+    color: #dc2626;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+  .input-box {
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px dashed #94a3b8;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: clamp(13px, 3.2vw, 16px);
+    font-weight: 800;
+    color: #0f172a;
+    outline: none;
+    width: 100%;
+  }
+  .input-box:focus {
+    border-color: #dc2626;
+    background: #ffffff;
+  }
+  .icon-badge {
+    width: 32px;
+    height: 32px;
+    background: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    flex-shrink: 0;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 16px;
+    border-top: 2px solid #cbd5e1;
+    padding-top: 12px;
+    gap: 10px;
+  }
+  .footer-text {
+    font-size: clamp(13px, 3.5vw, 18px);
+    font-weight: 900;
+    color: #0f172a;
+    letter-spacing: 0.5px;
+  }
+  .footer-text span {
+    color: #dc2626;
+  }
+  .barcode-box {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .barcode {
+    background: #000;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: clamp(14px, 3.5vw, 18px);
+    letter-spacing: 2px;
+    display: inline-block;
+  }
+  .barcode-id {
+    font-size: 10px;
+    font-weight: 800;
+    color: #475569;
+    margin-top: 2px;
+  }
+
   /* Save Button Styling */
   .save-btn {
     margin-top: 18px;
