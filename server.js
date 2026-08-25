@@ -20,7 +20,21 @@ const Player = require('./Player');
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB Atlas Connected Successfully'))
   .catch((err) => console.error('MongoDB Connection Error:', err));
+// NEW ROUTE: Fetch Player Data by UID
+app.get('/api/player/:uid', async (req, res) => {
+  try {
+    const player = await Player.findOne({ uid: req.params.uid });
+    
+    if (!player) {
+      return res.status(404).json({ success: false, message: 'Player NOT found!' });
+    }
 
+    res.status(200).json({ success: true, data: player });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+  
 // Route: Save or Update Player Card
 app.post('/api/player/save', async (req, res) => {
   try {
