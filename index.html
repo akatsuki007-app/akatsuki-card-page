@@ -3,74 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Free Fire Player Card - Mobile Responsive</title>
+<title>Free Fire Player Card - Gaming Edition</title>
 <style>
   * {
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Roboto, sans-serif;
   }
   body {
-    background-color: #0b0b0c;
+    background: #08080a;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    padding: 12px;
+    padding: 16px;
   }
   
+  /* Gaming Card Styling */
   .card {
     width: 100%;
     max-width: 650px;
-    background: linear-gradient(145deg, #eef0f3, #dbe0e6);
-    border-radius: 24px;
-    padding: 20px 22px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-    border: 3px solid #ffffff;
+    background: radial-gradient(circle at top left, #1f1f2e 0%, #0d0d14 100%);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 0 25px rgba(255, 180, 0, 0.15), inset 0 0 2px rgba(255, 255, 255, 0.2);
+    border: 2px solid #ffb400;
     position: relative;
+    color: #ffffff;
   }
 
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid #cbd5e1;
+    border-bottom: 2px solid rgba(255, 180, 0, 0.3);
     padding-bottom: 12px;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
     gap: 10px;
   }
   .flag-box {
-    width: 90px;
-    height: 28px;
+    width: 70px;
+    height: 22px;
     flex-shrink: 0;
     background: linear-gradient(to bottom, #FF9933 33.3%, #FFFFFF 33.3%, #FFFFFF 66.6%, #128807 66.6%);
-    border-radius: 6px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
   }
   .chakra {
-    width: 9px;
-    height: 9px;
-    border: 1.5px solid #000080;
+    width: 7px;
+    height: 7px;
+    border: 1px solid #000080;
     border-radius: 50%;
   }
   .title {
-    font-size: clamp(20px, 5vw, 28px);
+    font-size: clamp(22px, 5vw, 30px);
     font-weight: 900;
-    color: #111827;
-    letter-spacing: 1.5px;
-    text-align: center;
+    color: #ffb400;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255, 180, 0, 0.5);
     white-space: nowrap;
   }
   .sub-logo {
-    font-size: clamp(11px, 3vw, 14px);
+    font-size: clamp(11px, 3vw, 13px);
     font-weight: 800;
-    color: #1f2937;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    color: #94a3b8;
+    letter-spacing: 1px;
     white-space: nowrap;
     flex-shrink: 0;
   }
@@ -81,12 +81,12 @@
   }
 
   .avatar-container {
-    width: 220px;
+    width: 200px;
     aspect-ratio: 3 / 4;
     height: auto;
-    background: linear-gradient(180deg, #1f2e1e 0%, #0d140d 100%);
-    border-radius: 16px;
-    border: 3px solid #2d3a2c;
+    background: #14141f;
+    border-radius: 14px;
+    border: 2px solid #ffb400;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -94,6 +94,7 @@
     overflow: hidden;
     cursor: pointer;
     flex-shrink: 0;
+    box-shadow: 0 0 15px rgba(0,0,0,0.8);
   }
   .avatar-container img {
     width: 100%;
@@ -102,15 +103,16 @@
   }
   .avatar-hint {
     position: absolute;
-    bottom: 8px;
+    bottom: 0;
     left: 0;
     right: 0;
     text-align: center;
     font-size: 11px;
     font-weight: bold;
-    color: #4ade80;
-    background: rgba(0,0,0,0.6);
-    padding: 3px 0;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.75);
+    padding: 6px 0;
+    backdrop-filter: blur(2px);
   }
   #avatar-input {
     display: none;
@@ -127,46 +129,48 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1.5px solid #cbd5e1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     padding-bottom: 6px;
-    gap: 6px;
+    gap: 8px;
   }
   .field-row > div:first-child {
     flex: 1;
     min-width: 0;
   }
   .label {
-    font-size: clamp(10px, 2.5vw, 13px);
-    font-weight: 900;
-    color: #dc2626;
-    letter-spacing: 0.5px;
+    font-size: clamp(10px, 2.5vw, 12px);
+    font-weight: 800;
+    color: #ffb400;
+    letter-spacing: 1px;
     margin-bottom: 2px;
   }
   .input-box {
-    background: rgba(255, 255, 255, 0.85);
-    border: 1px dashed #94a3b8;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 180, 0, 0.3);
     border-radius: 6px;
-    padding: 4px 8px;
-    font-size: clamp(13px, 3.2vw, 16px);
-    font-weight: 800;
-    color: #0f172a;
+    padding: 6px 10px;
+    font-size: clamp(13px, 3.2vw, 15px);
+    font-weight: 700;
+    color: #ffffff;
     outline: none;
     width: 100%;
+    transition: all 0.3s ease;
   }
   .input-box:focus {
-    border-color: #dc2626;
-    background: #ffffff;
+    border-color: #ffb400;
+    background: rgba(255, 180, 0, 0.1);
+    box-shadow: 0 0 8px rgba(255, 180, 0, 0.3);
   }
   .icon-badge {
-    width: 32px;
-    height: 32px;
-    background: #ffffff;
-    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    font-size: 15px;
     flex-shrink: 0;
   }
 
@@ -174,46 +178,47 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-top: 16px;
-    border-top: 2px solid #cbd5e1;
-    padding-top: 12px;
+    margin-top: 20px;
+    border-top: 2px solid rgba(255, 180, 0, 0.3);
+    padding-top: 14px;
     gap: 10px;
   }
   .footer-text {
-    font-size: clamp(13px, 3.5vw, 18px);
+    font-size: clamp(12px, 3.5vw, 16px);
     font-weight: 900;
-    color: #0f172a;
-    letter-spacing: 0.5px;
+    color: #e2e8f0;
+    letter-spacing: 1px;
   }
   .footer-text span {
-    color: #dc2626;
+    color: #ffb400;
   }
   .barcode-box {
     text-align: right;
     flex-shrink: 0;
   }
   .barcode {
-    background: #000;
-    color: #fff;
-    padding: 3px 10px;
+    background: #ffffff;
+    color: #000000;
+    padding: 4px 10px;
     border-radius: 4px;
     font-family: monospace;
-    font-size: clamp(14px, 3.5vw, 18px);
+    font-size: clamp(13px, 3.5vw, 16px);
+    font-weight: bold;
     letter-spacing: 2px;
     display: inline-block;
   }
   .barcode-id {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 800;
-    color: #475569;
-    margin-top: 2px;
+    color: #ffb400;
+    margin-top: 4px;
   }
 
-  /* Button Actions Container */
+  /* Action Buttons Container */
   .btn-container {
     display: flex;
-    gap: 10px;
-    margin-top: 18px;
+    gap: 12px;
+    margin-top: 20px;
   }
 
   .action-btn {
@@ -222,56 +227,49 @@
     color: #ffffff;
     border: none;
     border-radius: 10px;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 800;
+    letter-spacing: 1px;
     cursor: pointer;
-    transition: opacity 0.2s ease;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
   }
   .fetch-btn {
     background: #2563eb;
-    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
   }
   .save-btn {
     background: #dc2626;
-    box-shadow: 0 4px 10px rgba(220, 38, 38, 0.3);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
   }
   .action-btn:hover {
-    opacity: 0.9;
+    transform: translateY(-2px);
+    filter: brightness(1.1);
   }
 
   @media (max-width: 520px) {
     .card {
       padding: 16px;
-      border-radius: 20px;
     }
     .content {
       flex-direction: column;
       align-items: center;
-      gap: 16px;
     }
     .avatar-container {
-      width: 180px;
-      max-width: 100%;
+      width: 160px;
     }
     .details {
       width: 100%;
       gap: 10px;
     }
-    .field-row {
-      padding-bottom: 4px;
-    }
     .footer {
       flex-direction: column;
       align-items: center;
       text-align: center;
-      gap: 8px;
+      gap: 10px;
     }
     .barcode-box {
       text-align: center;
-    }
-    .flag-box {
-      width: 70px;
-      height: 24px;
     }
     .btn-container {
       flex-direction: column;
@@ -374,7 +372,6 @@
     document.getElementById('barcode-text').innerText = 'FFID-' + val;
   }
 
-  // 1. Database Se UID Ke Zariye Data Fetch Karne Ka Function
   async function fetchFromDatabase() {
     const inputs = document.querySelectorAll('.input-box');
     const uidInput = inputs[1].value.trim();
@@ -412,7 +409,6 @@
     }
   }
 
-  // 2. Database Me Data Save Karne Ka Function
   async function saveToDatabase() {
     const inputs = document.querySelectorAll('.input-box');
 
@@ -449,363 +445,3 @@
 
 </body>
 </html>
-    border-bottom: 2px solid #cbd5e1;
-    padding-bottom: 12px;
-    margin-bottom: 18px;
-    gap: 10px;
-  }
-  .flag-box {
-    width: 90px;
-    height: 28px;
-    flex-shrink: 0;
-    background: linear-gradient(to bottom, #FF9933 33.3%, #FFFFFF 33.3%, #FFFFFF 66.6%, #128807 66.6%);
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-  }
-  .chakra {
-    width: 9px;
-    height: 9px;
-    border: 1.5px solid #000080;
-    border-radius: 50%;
-  }
-  .title {
-    font-size: clamp(20px, 5vw, 28px);
-    font-weight: 900;
-    color: #111827;
-    letter-spacing: 1.5px;
-    text-align: center;
-    white-space: nowrap;
-  }
-  .sub-logo {
-    font-size: clamp(11px, 3vw, 14px);
-    font-weight: 800;
-    color: #1f2937;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  .content {
-    display: flex;
-    gap: 20px;
-  }
-
-  .avatar-container {
-    width: 220px;
-    aspect-ratio: 3 / 4;
-    height: auto;
-    background: linear-gradient(180deg, #1f2e1e 0%, #0d140d 100%);
-    border-radius: 16px;
-    border: 3px solid #2d3a2c;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-  .avatar-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .avatar-hint {
-    position: absolute;
-    bottom: 8px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    font-size: 11px;
-    font-weight: bold;
-    color: #4ade80;
-    background: rgba(0,0,0,0.6);
-    padding: 3px 0;
-  }
-  #avatar-input {
-    display: none;
-  }
-
-  .details {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-width: 0;
-  }
-  .field-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1.5px solid #cbd5e1;
-    padding-bottom: 6px;
-    gap: 6px;
-  }
-  .field-row > div:first-child {
-    flex: 1;
-    min-width: 0;
-  }
-  .label {
-    font-size: clamp(10px, 2.5vw, 13px);
-    font-weight: 900;
-    color: #dc2626;
-    letter-spacing: 0.5px;
-    margin-bottom: 2px;
-  }
-  .input-box {
-    background: rgba(255, 255, 255, 0.85);
-    border: 1px dashed #94a3b8;
-    border-radius: 6px;
-    padding: 4px 8px;
-    font-size: clamp(13px, 3.2vw, 16px);
-    font-weight: 800;
-    color: #0f172a;
-    outline: none;
-    width: 100%;
-  }
-  .input-box:focus {
-    border-color: #dc2626;
-    background: #ffffff;
-  }
-  .icon-badge {
-    width: 32px;
-    height: 32px;
-    background: #ffffff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-    flex-shrink: 0;
-  }
-
-  .footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-top: 16px;
-    border-top: 2px solid #cbd5e1;
-    padding-top: 12px;
-    gap: 10px;
-  }
-  .footer-text {
-    font-size: clamp(13px, 3.5vw, 18px);
-    font-weight: 900;
-    color: #0f172a;
-    letter-spacing: 0.5px;
-  }
-  .footer-text span {
-    color: #dc2626;
-  }
-  .barcode-box {
-    text-align: right;
-    flex-shrink: 0;
-  }
-  .barcode {
-    background: #000;
-    color: #fff;
-    padding: 3px 10px;
-    border-radius: 4px;
-    font-family: monospace;
-    font-size: clamp(14px, 3.5vw, 18px);
-    letter-spacing: 2px;
-    display: inline-block;
-  }
-  .barcode-id {
-    font-size: 10px;
-    font-weight: 800;
-    color: #475569;
-    margin-top: 2px;
-  }
-
-  /* Save Button Styling */
-  .save-btn {
-    margin-top: 18px;
-    width: 100%;
-    padding: 12px;
-    background: #dc2626;
-    color: #ffffff;
-    border: none;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: 800;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(220, 38, 38, 0.3);
-    transition: background 0.2s ease;
-  }
-  .save-btn:hover {
-    background: #b91c1c;
-  }
-
-  @media (max-width: 520px) {
-    .card {
-      padding: 16px;
-      border-radius: 20px;
-    }
-    .content {
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-    }
-    .avatar-container {
-      width: 180px;
-      max-width: 100%;
-    }
-    .details {
-      width: 100%;
-      gap: 10px;
-    }
-    .field-row {
-      padding-bottom: 4px;
-    }
-    .footer {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 8px;
-    }
-    .barcode-box {
-      text-align: center;
-    }
-    .flag-box {
-      width: 70px;
-      height: 24px;
-    }
-  }
-</style>
-</head>
-<body>
-
-<div class="card">
-  <!-- Header -->
-  <div class="header">
-    <div class="flag-box">
-      <div class="chakra"></div>
-    </div>
-    <div class="title">FREE FIRE</div>
-    <div class="sub-logo">⚡ FF IDENTITY</div>
-  </div>
-
-  <!-- Content -->
-  <div class="content">
-    <div class="avatar-container" onclick="document.getElementById('avatar-input').click()">
-      <img src="https://static.wikia.nocookie.net/garena-freefire/images/7/73/Primis.jpg/revision/latest?cb=20210805064555" alt="Primis Character">
-      <div class="avatar-hint">📷 Tap to Change</div>
-      <input type="file" id="avatar-input" accept="image/*" onchange="loadAvatar(event)">
-    </div>
-
-    <!-- Fields -->
-    <div class="details">
-      <div class="field-row">
-        <div>
-          <div class="label">PLAYER NAME:</div>
-          <input type="text" class="input-box" value="Madara">
-        </div>
-        <div class="icon-badge">🏆</div>
-      </div>
-
-      <div class="field-row">
-        <div>
-          <div class="label">UID:</div>
-          <input type="text" class="input-box" value="696369108" oninput="updateBarcode(this.value)">
-        </div>
-        <div class="icon-badge">🛡️</div>
-      </div>
-
-      <div class="field-row">
-        <div>
-          <div class="label">REGION:</div>
-          <input type="text" class="input-box" value="INDIA">
-        </div>
-        <div class="icon-badge">🇮🇳</div>
-      </div>
-
-      <div class="field-row">
-        <div>
-          <div class="label">LEVEL:</div>
-          <input type="text" class="input-box" value="75">
-        </div>
-        <div class="icon-badge">⭐</div>
-      </div>
-
-      <div class="field-row">
-        <div>
-          <div class="label">ELITE PASS:</div>
-          <input type="text" class="input-box" value="MAX">
-        </div>
-        <div class="icon-badge">👑</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <div class="footer">
-    <div class="footer-text">
-      MY <span>FREE FIRE</span> IDENTITY
-    </div>
-    <div class="barcode-box">
-      <div class="barcode">|||| ||| ||||| |||</div>
-      <div class="barcode-id" id="barcode-text">FFID-696369108</div>
-    </div>
-  </div>
-
-  <!-- Save Button -->
-  <button type="button" class="save-btn" onclick="saveToDatabase()">SAVE CARD DATA</button>
-</div>
-
-<script>
-  function loadAvatar(event) {
-    const container = document.querySelector('.avatar-container');
-    const file = event.target.files[0];
-    if (file) {
-      container.querySelector('img').src = URL.createObjectURL(file);
-    }
-  }
-
-  function updateBarcode(val) {
-    document.getElementById('barcode-text').innerText = 'FFID-' + val;
-  }
-
-  async function saveToDatabase() {
-    const inputs = document.querySelectorAll('.input-box');
-
-    const playerData = {
-      playerName: inputs[0].value,
-      uid: inputs[1].value,
-      region: inputs[2].value,
-      level: Number(inputs[3].value),
-      elitePass: inputs[4].value,
-      avatarUrl: document.querySelector('.avatar-container img').src
-    };
-
-    // Render Web Service deploy hone par milne wala API link yahan update karein
-    const API_URL = 'https://ff-player-card.onrender.com/api/player/save';
-    try {
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(playerData)
-      });
-
-      const result = await response.json();
-      if (result.success) {
-        alert('Data MongoDB Atlas me successfully save ho gaya!');
-      } else {
-        alert('Error: ' + result.error);
-      }
-    } catch (error) {
-      console.error(error);
-      alert('Backend API se connection fail ho gaya!');
-    }
-  }
-</script>
-
-</body>
-  </html>
-  
