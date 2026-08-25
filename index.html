@@ -274,6 +274,16 @@
     .btn-container {
       flex-direction: column;
     }
+   /* Clear Button Styling */
+.clear-btn {
+  background: #475569;
+  box-shadow: 0 4px 12px rgba(71, 85, 105, 0.4);
+}
+
+.clear-btn:hover {
+  background: #334155;
+     }
+   
   }
 </style>
 </head>
@@ -352,14 +362,30 @@
     </div>
   </div>
 
-  <!-- Action Buttons -->
-  <div class="btn-container">
-    <button type="button" class="action-btn fetch-btn" onclick="fetchFromDatabase()">FETCH DATA</button>
-    <button type="button" class="action-btn save-btn" onclick="saveToDatabase()">SAVE CARD DATA</button>
-  </div>
+  <!-- Action Buttons Container -->
+<div class="btn-container">
+  <button type="button" class="action-btn fetch-btn" onclick="fetchFromDatabase()">FETCH DATA</button>
+  <button type="button" class="action-btn save-btn" onclick="saveToDatabase()">SAVE CARD DATA</button>
+  <button type="button" class="action-btn clear-btn" onclick="clearCardForm()">CLEAR</button>
+</div>
+
 </div>
 
 <script>
+ // Card Form Clear karne ka function
+function clearCardForm() {
+  const inputs = document.querySelectorAll('.input-box');
+
+  // Saari Input Fields Khali (Blank) Karein
+  inputs.forEach(input => input.value = '');
+
+  // Default Primis Avatar Image Set Karein
+  document.querySelector('.avatar-container img').src = 'https://static.wikia.nocookie.net/garena-freefire/images/7/73/Primis.jpg/revision/latest?cb=20210805064555';
+
+  // Barcode Text Reset Karein
+  document.getElementById('barcode-text').innerText = 'FFID-';
+}
+ 
   function loadAvatar(event) {
     const container = document.querySelector('.avatar-container');
     const file = event.target.files[0];
