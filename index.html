@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Fire Player Card - Viewer Edition</title>
+<style>
+  * {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+  }
+  body {
+    background: #08080a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 16px;
+  }
+  
+  /* Gaming Card Styling */
+  .card {
+    width: 100%;
+    max-width: 650px;
+    background: radial-gradient(circle at top left, #1f1f2e 0%, #0d0d14 100%);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 0 25px rgba(255, 180, 0, 0.15), inset 0 0 2px rgba(255, 255, 255, 0.2);
+    border: 2px solid #ffb400;
+    position: relative;
+    color: #ffffff;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid rgba(255, 180, 0, 0.3);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    gap: 10px;
+  }
+  .flag-box {
+    width: 70px;
+    height: 22px;
+    flex-shrink: 0;
+    background: linear-gradient(to bottom, #FF9933 33.3%, #FFFFFF 33.3%, #FFFFFF 66.6%, #128807 66.6%);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  }
+  .chakra {
+    width: 7px;
+    height: 7px;
+    border: 1px solid #000080;
+    border-radius: 50%;
+  }
+  .title {
+    font-size: clamp(22px, 5vw, 30px);
+    font-weight: 900;
+    color: #ffb400;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255, 180, 0, 0.5);
+    white-space: nowrap;
+  }
+  .sub-logo {
+    font-size: clamp(11px, 3vw, 13px);
+    font-weight: 800;
+    color: #94a3b8;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .content {
+    display: flex;
+    gap: 20px;
+  }
+
+  .avatar-container {
+    width: 200px;
+    aspect-ratio: 3 / 4;
+    height: auto;
+    background: #14141f;
+    border-radius: 14px;
+    border: 2px solid #ffb400;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 0 15px rgba(0,0,0,0.8);
+  }
+  .avatar-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
+  }
+  .field-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 6px;
+    gap: 8px;
+  }
+  .field-row > div:first-child {
+    flex: 1;
+    min-width: 0;
+  }
+  .label {
+    font-size: clamp(10px, 2.5vw, 12px);
+    font-weight: 800;
+    color: #ffb400;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  .input-box {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 180, 0, 0.3);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: clamp(13px, 3.2vw, 15px);
+    font-weight: 700;
+    color: #ffffff;
+    outline: none;
+    width: 100%;
+    transition: all 0.3s ease;
+  }
+  /* Disabled Input Styling */
+  .input-box:disabled {
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    cursor: not-allowed;
+  }
+  .input-box:focus:not(:disabled) {
+    border-color: #ffb400;
+    background: rgba(255, 180, 0, 0.1);
+    box-shadow: 0 0 8px rgba(255, 180, 0, 0.3);
+  }
+  .icon-badge {
+    width: 34px;
+    height: 34px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 20px;
+    border-top: 2px solid rgba(255, 180, 0, 0.3);
+    padding-top: 14px;
+    gap: 10px;
+  }
+  .footer-text {
+    font-size: clamp(12px, 3.5vw, 16px);
+    font-weight: 900;
+    color: #e2e8f0;
+    letter-spacing: 1px;
+  }
+  .footer-text span {
+    color: #ffb400;
+  }
+  .barcode-box {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .barcode {
+    background: #ffffff;
+    color: #000000;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: clamp(13px, 3.5vw, 16px);
+    font-weight: bold;
+    letter-spacing: 2px;
+    display: inline-block;
+  }
+  .barcode-id {
+    font-size: 11px;
+    font-weight: 800;
+    color: #ffb400;
+    margin-top: 4px;
+  }
+
+  /* Action Buttons Container */
+  .btn-container {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .action-btn {
+    flex: 1;
+    padding: 12px;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+  }
+  .fetch-btn {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+  }
+  .clear-btn {
+    background: #475569;
+    box-shadow: 0 4px 12px rgba(71, 85, 105, 0.4);
+  }
+  .clear-btn:hover {
+    background: #334155;
+  }
+  .action-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+  }
+
+  .card-footer {
+    text-align: center;
+    padding: 15px 0;
+    margin-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .card-footer p {
+    color: #a0a0a0;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  @media (max-width: 520px) {
+    .card {
+      padding: 16px;
+    }
+    .content {
+      flex-direction: column;
+      align-items: center;
+    }
+    .avatar-container {
+      width: 160px;
+    }
+    .details {
+      width: 100%;
+      gap: 10px;
+    }
+    .footer {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+    }
+    .barcode-box {
+      text-align: center;
+    }
+    .btn-container {
+      flex-direction: column;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <!-- Header -->
+  <div class="header">
+    <div class="flag-box">
+      <div class="chakra"></div>
+    </div>
+    <div class="title">FREE FIRE</div>
+    <div class="sub-logo">⚡ FF IDENTITY</div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <div class="avatar-container">
+      <img src="https://static.wikia.nocookie.net/garena-freefire/images/7/73/Primis.jpg/revision/latest?cb=20210805064555" alt="Primis Character" id="player-avatar">
+    </div>
+
+    <!-- Fields -->
+    <div class="details">
+      <div class="field-row">
+        <div>
+          <div class="label">PLAYER NAME:</div>
+          <input type="text" class="input-box" id="input-name" value="" placeholder="Search by UID..." disabled>
+        </div>
+        <div class="icon-badge">🏆</div>
+      </div>
+
+      <!-- Sirf UID input ENABLED hai -->
+      <div class="field-row">
+        <div>
+          <div class="label">UID (ENTER TO SEARCH):</div>
+          <input type="text" class="input-box" id="input-uid" value="" placeholder="Enter UID here" oninput="updateBarcode(this.value)">
+        </div>
+        <div class="icon-badge">🛡️</div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <div class="label">REGION:</div>
+          <input type="text" class="input-box" id="input-region" value="" placeholder="---" disabled>
+        </div>
+        <div class="icon-badge">🇮🇳</div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <div class="label">LEVEL:</div>
+          <input type="text" class="input-box" id="input-level" value="" placeholder="---" disabled>
+        </div>
+        <div class="icon-badge">⭐</div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <div class="label">ELITE PASS:</div>
+          <input type="text" class="input-box" id="input-pass" value="" placeholder="---" disabled>
+        </div>
+        <div class="icon-badge">👑</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-text">
+      MY <span>FREE FIRE</span> IDENTITY
+    </div>
+    <div class="barcode-box">
+      <div class="barcode">|||| ||| ||||| |||</div>
+      <div class="barcode-id" id="barcode-text">FFID-</div>
+    </div>
+  </div>
+
+  <!-- Action Buttons Container (Only Fetch & Clear) -->
+  <div class="btn-container">
+    <button type="button" class="action-btn fetch-btn" onclick="fetchFromDatabase()">FETCH DATA</button>
+    <button type="button" class="action-btn clear-btn" onclick="clearCardForm()">CLEAR</button>
+  </div>
+
+  <!-- Footer Section -->
+  <footer class="card-footer">
+    <p>© Copyright by Zahid &amp; Created by Zahid</p>
+  </footer>
+</div>
+
+<script>
+  function updateBarcode(val) {
+    document.getElementById('barcode-text').innerText = 'FFID-' + val;
+  }
+
+  async function fetchFromDatabase() {
+    const uidInput = document.getElementById('input-uid').value.trim();
+
+    if (!uidInput) {
+      alert('Kripya pehle UID field me ID enter karein!');
+      return;
+    }
+
+    const API_URL = `https://ff-player-card.onrender.com/api/player/${uidInput}`;
+
+    try {
+      const response = await fetch(API_URL, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      const result = await response.json();
+
+      if (result.success) {
+        const player = result.data;
+        document.getElementById('input-name').value = player.playerName || 'N/A';
+        document.getElementById('input-region').value = player.region || 'N/A';
+        document.getElementById('input-level').value = player.level || 'N/A';
+        document.getElementById('input-pass').value = player.elitePass || 'N/A';
+
+        if (player.avatarUrl) {
+          document.getElementById('player-avatar').src = player.avatarUrl;
+        }
+
+        updateBarcode(player.uid);
+        alert('Player Data Successfully Load Ho Gaya!');
+      } else {
+        alert('Is UID ka koi data database me nahi mila!');
+      }
+    } catch (error) {
+      console.error('FETCH ERROR:', error);
+      alert('Backend se connect karne me error aaya! Server restart ho raha ho sakta hai.');
+    }
+  }
+
+  function clearCardForm() {
+    document.getElementById('input-uid').value = '';
+    document.getElementById('input-name').value = '';
+    document.getElementById('input-region').value = '';
+    document.getElementById('input-level').value = '';
+    document.getElementById('input-pass').value = '';
+    
+    document.getElementById('player-avatar').src = 'https://static.wikia.nocookie.net/garena-freefire/images/7/73/Primis.jpg/revision/latest?cb=20210805064555';
+    document.getElementById('barcode-text').innerText = 'FFID-';
+  }
+</script>
+
+</body>
+      </html>
+      
