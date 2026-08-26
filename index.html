@@ -32,6 +32,32 @@
     color: #ffffff;
   }
 
+  /* Top Bar Header for All Players Button */
+  .top-bar {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 12px;
+  }
+  .all-players-btn {
+    background: rgba(255, 180, 0, 0.15);
+    border: 1px solid #ffb400;
+    color: #ffb400;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 0 10px rgba(255, 180, 0, 0.2);
+  }
+  .all-players-btn:hover {
+    background: #ffb400;
+    color: #000;
+  }
+
   .header {
     display: flex;
     justify-content: space-between;
@@ -139,7 +165,6 @@
     width: 100%;
     transition: all 0.3s ease;
   }
-  /* Disabled Input Styling */
   .input-box:disabled {
     background: rgba(255, 255, 255, 0.02);
     border-color: rgba(255, 255, 255, 0.1);
@@ -204,7 +229,6 @@
     margin-top: 4px;
   }
 
-  /* Action Buttons Container */
   .btn-container {
     display: flex;
     gap: 12px;
@@ -256,6 +280,112 @@
     font-family: 'Poppins', sans-serif;
   }
 
+  /* ===== Modal Styling (Player List) ===== */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(4px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 15px;
+  }
+  .modal-overlay.active {
+    display: flex;
+  }
+  .modal-box {
+    background: #14141f;
+    border: 2px solid #ffb400;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 450px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 30px rgba(255, 180, 0, 0.3);
+    overflow: hidden;
+  }
+  .modal-header {
+    padding: 15px;
+    background: rgba(255, 180, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 180, 0, 0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-header h3 {
+    margin: 0;
+    color: #ffb400;
+    font-size: 18px;
+    font-weight: 800;
+  }
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: #ff5050;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  /* Modal Search Bar */
+  .modal-search-box {
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .modal-search-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #ffb400;
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #fff;
+    font-weight: 600;
+    outline: none;
+    font-size: 14px;
+  }
+  .modal-search-input:focus {
+    box-shadow: 0 0 8px rgba(255, 180, 0, 0.4);
+  }
+
+  .player-list {
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .player-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .player-item:hover {
+    background: rgba(255, 180, 0, 0.15);
+    border-color: #ffb400;
+  }
+  .p-name {
+    font-weight: 700;
+    color: #fff;
+    font-size: 15px;
+  }
+  .p-uid {
+    font-size: 12px;
+    color: #ffb400;
+    font-weight: 600;
+  }
+
   @media (max-width: 520px) {
     .card {
       padding: 16px;
@@ -289,6 +419,11 @@
 <body>
 
 <div class="card">
+  <!-- Top Bar for All Players Option -->
+  <div class="top-bar">
+    <button type="button" class="all-players-btn" onclick="openPlayerList()">👥 ALL PLAYERS</button>
+  </div>
+
   <!-- Header -->
   <div class="header">
     <div class="flag-box">
@@ -314,7 +449,6 @@
         <div class="icon-badge">🏆</div>
       </div>
 
-      <!-- Sirf UID input ENABLED hai -->
       <div class="field-row">
         <div>
           <div class="label">UID (ENTER TO SEARCH):</div>
@@ -360,7 +494,7 @@
     </div>
   </div>
 
-  <!-- Action Buttons Container (Only Fetch & Clear) -->
+  <!-- Action Buttons Container -->
   <div class="btn-container">
     <button type="button" class="action-btn fetch-btn" onclick="fetchFromDatabase()">FETCH DATA</button>
     <button type="button" class="action-btn clear-btn" onclick="clearCardForm()">CLEAR</button>
@@ -372,9 +506,46 @@
   </footer>
 </div>
 
+<!-- All Players Modal with Search Bar -->
+<div class="modal-overlay" id="playerModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>👥 ALL PLAYERS LIST</h3>
+      <button class="close-btn" onclick="closePlayerList()">✕</button>
+    </div>
+    
+    <!-- Search Bar Inside Modal -->
+    <div class="modal-search-box">
+      <input type="text" class="modal-search-input" id="modalSearchInput" placeholder="🔍 Search by Name or UID..." onkeyup="filterPlayerList()">
+    </div>
+
+    <div class="player-list" id="modal-player-list">
+      <p style="text-align: center; color: #a0a0a0;">Loading players...</p>
+    </div>
+  </div>
+</div>
+
 <script>
+  let allPlayersData = []; // Store players list globally for instant searching
+
   function updateBarcode(val) {
     document.getElementById('barcode-text').innerText = 'FFID-' + val;
+  }
+
+  function populateCard(player) {
+    document.getElementById('input-uid').value = player.uid || '';
+    document.getElementById('input-name').value = player.playerName || 'N/A';
+    document.getElementById('input-region').value = player.region || 'N/A';
+    document.getElementById('input-level').value = player.level || 'N/A';
+    document.getElementById('input-pass').value = player.elitePass || 'N/A';
+
+    if (player.avatarUrl) {
+      document.getElementById('player-avatar').src = player.avatarUrl;
+    } else {
+      document.getElementById('player-avatar').src = 'https://static.wikia.nocookie.net/garena-freefire/images/7/73/Primis.jpg/revision/latest?cb=20210805064555';
+    }
+
+    updateBarcode(player.uid || '');
   }
 
   async function fetchFromDatabase() {
@@ -390,33 +561,90 @@
     try {
       const response = await fetch(API_URL, {
         method: 'GET',
-        headers: {
-          'Accept': 'application/json'
-        }
+        headers: { 'Accept': 'application/json' }
       });
       
       const result = await response.json();
 
       if (result.success) {
-        const player = result.data;
-        document.getElementById('input-name').value = player.playerName || 'N/A';
-        document.getElementById('input-region').value = player.region || 'N/A';
-        document.getElementById('input-level').value = player.level || 'N/A';
-        document.getElementById('input-pass').value = player.elitePass || 'N/A';
-
-        if (player.avatarUrl) {
-          document.getElementById('player-avatar').src = player.avatarUrl;
-        }
-
-        updateBarcode(player.uid);
+        populateCard(result.data);
         alert('Player Data Successfully Load Ho Gaya!');
       } else {
         alert('Is UID ka koi data database me nahi mila!');
       }
     } catch (error) {
       console.error('FETCH ERROR:', error);
-      alert('Backend se connect karne me error aaya! Server restart ho raha ho sakta hai.');
+      alert('Backend se connect karne me error aaya!');
     }
+  }
+
+  async function openPlayerList() {
+    document.getElementById('playerModal').classList.add('active');
+    document.getElementById('modalSearchInput').value = '';
+    const listContainer = document.getElementById('modal-player-list');
+    listContainer.innerHTML = '<p style="text-align: center; color: #a0a0a0;">Loading players...</p>';
+
+    const API_URL = `https://ff-player-card.onrender.com/api/players`;
+
+    try {
+      const response = await fetch(API_URL);
+      
+      if (!response.ok) {
+        throw new Error(`Server Status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+
+      if (result.success && result.data && result.data.length > 0) {
+        allPlayersData = result.data; // Save data locally
+        renderPlayerList(allPlayersData);
+      } else {
+        listContainer.innerHTML = '<p style="text-align: center; color: #a0a0a0;">Database me koi player nahi mila!</p>';
+      }
+    } catch (error) {
+      console.error('FETCH PLAYERS ERROR:', error);
+      listContainer.innerHTML = `<p style="text-align: center; color: #ff5050;">Failed to load player list!<br><small>(${error.message})</small></p>`;
+    }
+  }
+
+  function renderPlayerList(players) {
+    const listContainer = document.getElementById('modal-player-list');
+    listContainer.innerHTML = '';
+
+    if (players.length === 0) {
+      listContainer.innerHTML = '<p style="text-align: center; color: #a0a0a0;">Koi matching player nahi mila!</p>';
+      return;
+    }
+
+    players.forEach(player => {
+      const item = document.createElement('div');
+      item.className = 'player-item';
+      item.innerHTML = `
+        <span class="p-name">${player.playerName || 'Unknown'}</span>
+        <span class="p-uid">UID: ${player.uid}</span>
+      `;
+      item.onclick = () => {
+        populateCard(player);
+        closePlayerList();
+      };
+      listContainer.appendChild(item);
+    });
+  }
+
+  function filterPlayerList() {
+    const query = document.getElementById('modalSearchInput').value.toLowerCase().trim();
+    
+    const filtered = allPlayersData.filter(player => {
+      const name = (player.playerName || '').toLowerCase();
+      const uid = (player.uid || '').toString();
+      return name.includes(query) || uid.includes(query);
+    });
+
+    renderPlayerList(filtered);
+  }
+
+  function closePlayerList() {
+    document.getElementById('playerModal').classList.remove('active');
   }
 
   function clearCardForm() {
@@ -432,5 +660,4 @@
 </script>
 
 </body>
-      </html>
-      
+</html>
