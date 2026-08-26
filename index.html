@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Free Fire Player Card - Viewer Edition</title>
+<!-- html2pdf Library for PDF Download -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   * {
     box-sizing: border-box;
@@ -233,10 +235,12 @@
     display: flex;
     gap: 12px;
     margin-top: 20px;
+    flex-wrap: wrap;
   }
 
   .action-btn {
     flex: 1;
+    min-width: 120px;
     padding: 12px;
     color: #ffffff;
     border: none;
@@ -251,6 +255,10 @@
   .fetch-btn {
     background: #2563eb;
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+  }
+  .pdf-btn {
+    background: #059669;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
   }
   .clear-btn {
     background: #475569;
@@ -418,9 +426,9 @@
 </head>
 <body>
 
-<div class="card">
+<div class="card" id="playerCardContainer">
   <!-- Top Bar for All Players Option -->
-  <div class="top-bar">
+  <div class="top-bar" data-html2pdf-ignore="true">
     <button type="button" class="all-players-btn" onclick="openPlayerList()">👥 ALL PLAYERS</button>
   </div>
 
@@ -455,6 +463,14 @@
           <input type="text" class="input-box" id="input-uid" value="" placeholder="Enter UID here" oninput="updateBarcode(this.value)">
         </div>
         <div class="icon-badge">🛡️</div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <div class="label">GUILD NAME:</div>
+          <input type="text" class="input-box" id="input-guild" value="" placeholder="---" disabled>
+        </div>
+        <div class="icon-badge">⚔️</div>
       </div>
 
       <div class="field-row">
@@ -495,8 +511,9 @@
   </div>
 
   <!-- Action Buttons Container -->
-  <div class="btn-container">
+  <div class="btn-container" data-html2pdf-ignore="true">
     <button type="button" class="action-btn fetch-btn" onclick="fetchFromDatabase()">FETCH DATA</button>
+    <button type="button" class="action-btn pdf-btn" onclick="downloadCardPDF()">DOWNLOAD PDF</button>
     <button type="button" class="action-btn clear-btn" onclick="clearCardForm()">CLEAR</button>
   </div>
 
@@ -526,7 +543,7 @@
 </div>
 
 <script>
-  let allPlayersData = []; // Store players list globally for instant searching
+  let allPlayersData = []; 
 
   function updateBarcode(val) {
     document.getElementById('barcode-text').innerText = 'FFID-' + val;
@@ -535,6 +552,7 @@
   function populateCard(player) {
     document.getElementById('input-uid').value = player.uid || '';
     document.getElementById('input-name').value = player.playerName || 'N/A';
+    document.getElementById('input-guild').value = player.guildName || 'N/A';
     document.getElementById('input-region').value = player.region || 'N/A';
     document.getElementById('input-level').value = player.level || 'N/A';
     document.getElementById('input-pass').value = player.elitePass || 'N/A';
@@ -578,6 +596,143 @@
     }
   }
 
+  // ADVANCED PDF DOWNLOAD FUNCTION
+  async function downloadCardPDF() {
+    const cardElement = document.getElementById('playerCardContainer');
+    const playerName = document.querySelectorAll('.input-box')[0].value || 'Player';
+
+    // A4 wrapper with White Background (#ffffff)
+    const wrapper = document.createElement('div');
+    wrapper.style.width = '210mm';
+    wrapper.style.height = '295mm';
+    wrapper.style.display = 'flex';
+    wrapper.style.justifyContent = 'center';
+    wrapper.style.alignItems = 'center';
+    wrapper.style.backgroundColor = '#ffffff';
+    wrapper.style.boxSizing = 'border-box';
+    wrapper.style.overflow = 'hidden';
+
+    // Cloned card container
+    const clonedCard = cardElement.cloneNode(true);
+    clonedCard.style.width = '530px'; 
+    clonedCard.style.maxWidth = '100%';
+    clonedCard.style.padding = '32px';
+    clonedCard.style.margin = '0 auto';
+    clonedCard.style.transform = 'scale(0.85)';
+    clonedCard.style.transformOrigin = 'center center';
+    clonedCard.style.position = 'relative';
+
+    // 1. Akatsuki Watermark Text Background
+    const watermarkText = document.createElement('div');
+    watermarkText.innerText = 'AKATSUKI';
+    watermarkText.style.position = 'absolute';
+    watermarkText.style.top = '48%';
+    watermarkText.style.left = '50%';
+    watermarkText.style.transform = 'translate(-50%, -50%) rotate(-20deg)';
+    watermarkText.style.fontSize = '72px';
+    watermarkText.style.fontWeight = '900';
+    watermarkText.style.color = '#ff0000';
+    watermarkText.style.opacity = '0.08';
+    watermarkText.style.letterSpacing = '6px';
+    watermarkText.style.pointerEvents = 'none';
+    watermarkText.style.zIndex = '0';
+    watermarkText.style.whiteSpace = 'nowrap';
+    clonedCard.appendChild(watermarkText);
+
+    // 2. Emoji Cloud with Native Red Radial Glow
+    const createCloudEmojiWithGlow = (position) => {
+      const container = document.createElement('div');
+      container.style.position = 'absolute';
+      container.style.top = '165px';
+      container.style.width = '60px';
+      container.style.height = '60px';
+      container.style.display = 'flex';
+      container.style.alignItems = 'center';
+      container.style.justifyContent = 'center';
+      container.style.zIndex = '99999';
+
+      if (position === 'left') {
+        container.style.left = '25px';
+      } else {
+        container.style.right = '25px';
+      }
+
+      const redGlow = document.createElement('div');
+      redGlow.style.position = 'absolute';
+      redGlow.style.width = '55px';
+      redGlow.style.height = '55px';
+      redGlow.style.borderRadius = '50%';
+      redGlow.style.background = 'radial-gradient(circle, rgba(255, 0, 0, 0.95) 0%, rgba(231, 76, 60, 0.6) 45%, rgba(255, 0, 0, 0) 75%)';
+      redGlow.style.zIndex = '1';
+
+      const emojiText = document.createElement('span');
+      emojiText.innerText = '☁️';
+      emojiText.style.fontSize = '40px';
+      emojiText.style.position = 'relative';
+      emojiText.style.zIndex = '2';
+      emojiText.style.lineHeight = '1';
+
+      container.appendChild(redGlow);
+      container.appendChild(emojiText);
+
+      return container;
+    };
+
+    clonedCard.appendChild(createCloudEmojiWithGlow('left'));
+    clonedCard.appendChild(createCloudEmojiWithGlow('right'));
+
+    // Dynamic Spacing adjustments & Input Fields Customization
+    const contentBox = clonedCard.querySelector('.content');
+    if (contentBox) contentBox.style.gap = '24px';
+
+    const detailsBox = clonedCard.querySelectorAll('.field-row');
+    detailsBox.forEach(row => {
+      row.style.paddingBottom = '10px';
+      row.style.marginBottom = '6px';
+      row.style.width = '75%';
+      row.style.marginLeft = 'auto';
+      row.style.marginRight = 'auto';
+      row.style.position = 'relative'; 
+      row.style.zIndex = '2';
+    });
+
+    // 3. Footer me "Created by Zahid" Text
+    let footerBox = clonedCard.querySelector('.footer');
+    if (!footerBox) {
+      footerBox = document.createElement('div');
+      footerBox.className = 'footer';
+      clonedCard.appendChild(footerBox);
+    }
+    footerBox.style.marginTop = '24px';
+    footerBox.style.paddingTop = '18px';
+    footerBox.style.textAlign = 'center';
+    footerBox.style.fontSize = '12px';
+    footerBox.style.color = '#888888';
+    footerBox.style.position = 'relative';
+    footerBox.style.zIndex = '2';
+    
+    footerBox.innerHTML += '<div style="margin-top: 8px; font-weight: bold; color: #f39c12; letter-spacing: 0.5px;">Created by Zahid</div>';
+
+    const elementsToRemove = clonedCard.querySelectorAll('[data-html2pdf-ignore="true"]');
+    elementsToRemove.forEach(el => el.remove());
+
+    wrapper.appendChild(clonedCard);
+    document.body.appendChild(wrapper);
+
+    const options = {
+      margin:       0,
+      filename:     `FreeFire_Card_${playerName}.pdf`,
+      image:        { type: 'jpeg', quality: 1.0 },
+      html2canvas:  { scale: 3, useCORS: true, scrollX: 0, scrollY: 0 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak:    { mode: ['avoid-all'] }
+    };
+
+    html2pdf().from(wrapper).set(options).save().then(() => {
+      document.body.removeChild(wrapper);
+    });
+  }
+
   async function openPlayerList() {
     document.getElementById('playerModal').classList.add('active');
     document.getElementById('modalSearchInput').value = '';
@@ -596,7 +751,7 @@
       const result = await response.json();
 
       if (result.success && result.data && result.data.length > 0) {
-        allPlayersData = result.data; // Save data locally
+        allPlayersData = result.data; 
         renderPlayerList(allPlayersData);
       } else {
         listContainer.innerHTML = '<p style="text-align: center; color: #a0a0a0;">Database me koi player nahi mila!</p>';
@@ -650,6 +805,7 @@
   function clearCardForm() {
     document.getElementById('input-uid').value = '';
     document.getElementById('input-name').value = '';
+    document.getElementById('input-guild').value = '';
     document.getElementById('input-region').value = '';
     document.getElementById('input-level').value = '';
     document.getElementById('input-pass').value = '';
