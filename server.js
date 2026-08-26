@@ -10,7 +10,6 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // 2. MongoDB Atlas Connection
-// (Apna MongoDB Atlas URI connection string environment variable me rakhein ya direct link lagayein)
 const MONGO_URI = process.env.MONGO_URI || 'YOUR_MONGODB_ATLAS_CONNECTION_STRING_HERE';
 
 mongoose.connect(MONGO_URI)
@@ -55,7 +54,7 @@ app.post('/api/player/save', async (req, res) => {
   }
 });
 
-// 6. Fetch Player Data by UID Route
+// 6. Fetch Single Player Data by UID Route
 app.get('/api/player/:uid', async (req, res) => {
   try {
     const player = await Player.findOne({ uid: req.params.uid });
@@ -65,6 +64,16 @@ app.get('/api/player/:uid', async (req, res) => {
     }
 
     res.status(200).json({ success: true, data: player });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ===== 6.5 ADDED: Fetch All Players Route (Yeh missing tha) =====
+app.get('/api/players', async (req, res) => {
+  try {
+    const players = await Player.find().sort({ createdAt: -1 });
+    res.status(200).json({ success: true, data: players });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
