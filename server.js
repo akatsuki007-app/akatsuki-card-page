@@ -16,7 +16,7 @@ mongoose.connect(MONGO_URI)
   .then(() => console.log('MongoDB Atlas Connected Successfully!'))
   .catch((err) => console.error('MongoDB Connection Error:', err));
 
-// 3. Mongoose Player Schema & Model Definition
+// 3. Mongoose Schemas & Models Definition
 const playerSchema = new mongoose.Schema({
   playerName: String,
   uid: { type: String, required: true, unique: true },
@@ -27,6 +27,15 @@ const playerSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const Player = mongoose.model('Player', playerSchema);
+
+// Resource Schema (Akatsuki Cloud / Static Assets)
+const resourceSchema = new mongoose.Schema({
+  name: { type: String, required: true, unique: true },
+  type: String,
+  imageBase64: String
+}, { timestamps: true });
+
+const Resource = mongoose.model('Resource', resourceSchema);
 
 // 4. Test Route
 app.get('/', (req, res) => {
@@ -69,11 +78,26 @@ app.get('/api/player/:uid', async (req, res) => {
   }
 });
 
-// ===== 6.5 ADDED: Fetch All Players Route (Yeh missing tha) =====
+// 6.5 Fetch All Players Route
 app.get('/api/players', async (req, res) => {
   try {
     const players = await Player.find().sort({ createdAt: -1 });
     res.status(200).json({ success: true, data: players });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ===== 6.6 ADDED: Fetch Resource by Name (Akatsuki Cloud Image Fetch Route) =====
+app.get('/api/resource/:name', async (req, res) => {
+  try {
+    const resource = await Resource.findOne({ name: req.params.name });
+    
+    if (!resource) {
+      return res.status(404).json({ success: false, message: 'Resource nahi mila!' });
+    }
+
+    res.status(200).json({ success: true, data: resource });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
