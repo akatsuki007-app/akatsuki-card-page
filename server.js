@@ -1,109 +1,119 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const Player = require('./models/Player');
 
 const app = express();
 
-// 1. CORS & Size Limit Fix (Base64 image ke liye mandatory hai)
+// Middlewares
 app.use(cors());
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(express.json({ limit: '10mb' })); // Base64 avatar images ke liye limit Badhayi gayi hai
 
-// 2. MongoDB Atlas Connection
-const MONGO_URI = process.env.MONGO_URI || 'YOUR_MONGODB_ATLAS_CONNECTION_STRING_HERE';
+// MongoDB Atlas Connection String
+// (Apna MongoDB URL yahan update karein)
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://YOUR_USERNAME:YOUR_PASSWORD@cluster0.mongodb.net/freefire?retryWrites=true&w=majority';
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log('MongoDB Atlas Connected Successfully!'))
-  .catch((err) => console.error('MongoDB Connection Error:', err));
+  .catch(err => console.error('MongoDB Connection Error:', err));
 
-// 3. Mongoose Schemas & Models Definition
-const playerSchema = new mongoose.Schema({
-  playerName: String,
-  uid: { type: String, required: true, unique: true },
-  region: String,
-  level: Number,
-  elitePass: String,
-  avatarUrl: String
-}, { timestamps: true });
-
-const Player = mongoose.model('Player', playerSchema);
-
-// Resource Schema (Akatsuki Cloud / Static Assets)
-const resourceSchema = new mongoose.Schema({
-  name: { type: String, required: true, unique: true },
-  type: String,
-  imageBase64: String
-}, { timestamps: true });
-
-const Resource = mongoose.model('Resource', resourceSchema);
-
-// 4. Test Route
-app.get('/', (req, res) => {
-  res.send('Free Fire Player Card API is Running Successfully!');
-});
-
-// 5. Save or Update Player Route
+// 1. SAVE / UPDATE PLAYER DATA
 app.post('/api/player/save', async (req, res) => {
   try {
-    const { playerName, uid, region, level, elitePass, avatarUrl } = req.body;
+    const { playerName, uid, guildName, region, level, elitePass, avatarUrl } = req.body;
 
-    if (!uid) {
-      return res.status(400).json({ success: false, error: 'UID required hai!' });
+    if (!uid || !playerName) {
+      return res.status(400).json({
+        success: false,
+        message: 'Player Name aur UID mandatory hain!'
+      });
     }
 
+    // UID se check karein agar player pehle se exist karta hai to Update karein, nahi to Create karein
     const updatedPlayer = await Player.findOneAndUpdate(
-      { uid: uid },
-      { playerName, region, level, elitePass, avatarUrl },
-      { upsert: true, new: true }
+      { uid: uid.trim() },
+      {
+        playerName: playerName.trim(),
+        guildName: guildName ? guildName.trim() : '',
+        region: region ? region.trim() : 'INDIA',
+        level: level || 1,
+        elitePass: elitePass ? elitePass.trim() : 'NONE',
+        avatarUrl: avatarUrl || ''
+      },
+      { new: true, upsert: true }
     );
 
-    res.status(200).json({ success: true, data: updatedPlayer });
+    res.status(200).json({
+      success: true,
+      message: 'Player Data Successfully Saved/Updated!',
+      data: updatedPlayer
+    });
+
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    console.error('Save Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server Error: Data save nahi ho paya!',
+      error: error.message
+    });
   }
 });
 
-// 6. Fetch Single Player Data by UID Route
+// 2. FETCH SINGLE PLAYER BY UID
 app.get('/api/player/:uid', async (req, res) => {
   try {
-    const player = await Player.findOne({ uid: req.params.uid });
-    
+    const { uid } = req.params;
+    const player = await Player.findOne({ uid: uid.trim() });
+
     if (!player) {
-      return res.status(404).json({ success: false, message: 'Player NOT found!' });
+      return res.status(404).json({
+        success: false,
+        message: 'Player nahi mila!'
+      });
     }
 
-    res.status(200).json({ success: true, data: player });
+    res.status(200).json({
+      success: true,
+      data: player
+    });
+
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    console.error('Fetch Single Player Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server Error: Fetch karne me dikkat aayi!',
+      error: error.message
+    });
   }
 });
 
-// 6.5 Fetch All Players Route
+// 3. FETCH ALL PLAYERS LIST (For Modal Pop-up)
 app.get('/api/players', async (req, res) => {
   try {
     const players = await Player.find().sort({ createdAt: -1 });
-    res.status(200).json({ success: true, data: players });
+
+    res.status(200).json({
+      success: true,
+      count: players.length,
+      data: players
+    });
+
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    console.error('Fetch All Players Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server Error: Players list load nahi ho saki!',
+      error: error.message
+    });
   }
 });
 
-// ===== 6.6 ADDED: Fetch Resource by Name (Akatsuki Cloud Image Fetch Route) =====
-app.get('/api/resource/:name', async (req, res) => {
-  try {
-    const resource = await Resource.findOne({ name: req.params.name });
-    
-    if (!resource) {
-      return res.status(404).json({ success: false, message: 'Resource nahi mila!' });
-    }
-
-    res.status(200).json({ success: true, data: resource });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
+// Health Check Route
+app.get('/', (req, res) => {
+  res.send('Free Fire Player Card API is running smoothly!');
 });
 
-// 7. Port Handling
+// Port Listening
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
