@@ -1,17 +1,29 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const Player = require('./models/Player');
 
 const app = express();
 
 // Middlewares
 app.use(cors());
-app.use(express.json({ limit: '10mb' })); // Base64 avatar images ke liye limit Badhayi gayi hai
+app.use(express.json({ limit: '10mb' }));
+
+// ---------------- MONGOOSE SCHEMA & MODEL (Direct inside server.js) ----------------
+const playerSchema = new mongoose.Schema({
+  playerName: { type: String, required: true, trim: true },
+  uid: { type: String, required: true, unique: true, trim: true },
+  guildName: { type: String, default: '' },
+  region: { type: String, default: 'INDIA' },
+  level: { type: Number, default: 1 },
+  elitePass: { type: String, default: 'NONE' },
+  avatarUrl: { type: String, default: '' }
+}, { timestamps: true });
+
+const Player = mongoose.model('Player', playerSchema);
+// -----------------------------------------------------------------------------------
 
 // MongoDB Atlas Connection String
-// (Apna MongoDB URL yahan update karein)
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://YOUR_USERNAME:YOUR_PASSWORD@cluster0.mongodb.net/freefire?retryWrites=true&w=majority';
+const MONGO_URI = process.env.MONGO_URI || 'YOUR_MONGODB_ATLAS_URL_HERE';
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log('MongoDB Atlas Connected Successfully!'))
@@ -29,7 +41,6 @@ app.post('/api/player/save', async (req, res) => {
       });
     }
 
-    // UID se check karein agar player pehle se exist karta hai to Update karein, nahi to Create karein
     const updatedPlayer = await Player.findOneAndUpdate(
       { uid: uid.trim() },
       {
@@ -87,7 +98,7 @@ app.get('/api/player/:uid', async (req, res) => {
   }
 });
 
-// 3. FETCH ALL PLAYERS LIST (For Modal Pop-up)
+// 3. FETCH ALL PLAYERS LIST
 app.get('/api/players', async (req, res) => {
   try {
     const players = await Player.find().sort({ createdAt: -1 });
@@ -108,13 +119,14 @@ app.get('/api/players', async (req, res) => {
   }
 });
 
-// Health Check Route
+// Root Route
 app.get('/', (req, res) => {
   res.send('Free Fire Player Card API is running smoothly!');
 });
 
-// Port Listening
+// Server Listen
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+  
