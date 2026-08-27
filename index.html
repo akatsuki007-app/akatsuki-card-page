@@ -3,35 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Free Fire Player Card - Viewer Edition</title>
+<title>Free Fire Player Card - Elite Viewer Edition</title>
 <!-- html2pdf Library for PDF Download -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- FontAwesome for Gaming Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Teko:wght@600;700&display=swap" rel="stylesheet">
+
 <style>
+  :root {
+    --bg-dark: #07080c;
+    --card-bg: radial-gradient(circle at 0% 0%, #1c1d2d 0%, #0d0e17 75%, #080910 100%);
+    --accent-gold: #ffb400;
+    --accent-gold-glow: rgba(255, 180, 0, 0.4);
+    --accent-red: #ff2a2a;
+    --accent-blue: #3b82f6;
+    --accent-green: #10b981;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 180, 0, 0.25);
+  }
+
   * {
     box-sizing: border-box;
-    font-family: 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
+  
   body {
-    background: #08080a;
+    background: var(--bg-dark);
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    padding: 16px;
+    padding: 8px; /* Required 8px outer padding for screen container */
+    background-image: 
+      radial-gradient(circle at 15% 20%, rgba(255, 42, 42, 0.08) 0%, transparent 45%),
+      radial-gradient(circle at 85% 80%, rgba(255, 180, 0, 0.08) 0%, transparent 45%);
   }
   
   /* Gaming Card Styling */
   .card {
     width: 100%;
-    max-width: 650px;
-    background: radial-gradient(circle at top left, #1f1f2e 0%, #0d0d14 100%);
+    max-width: 680px;
+    background: var(--card-bg);
     border-radius: 20px;
-    padding: 24px;
-    box-shadow: 0 0 25px rgba(255, 180, 0, 0.15), inset 0 0 2px rgba(255, 255, 255, 0.2);
-    border: 2px solid #ffb400;
+    padding: 16px; /* Inner card padding */
+    box-shadow: 
+      0 15px 35px -5px rgba(0, 0, 0, 0.8),
+      0 0 30px rgba(255, 180, 0, 0.15),
+      inset 0 0 2px rgba(255, 255, 255, 0.15);
+    border: 2px solid var(--accent-gold);
     position: relative;
-    color: #ffffff;
+    color: var(--text-main);
+    overflow: hidden;
+  }
+
+  /* Decorative Red Akatsuki Glow Background Effect */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(255, 42, 42, 0.2) 0%, transparent 70%);
+    pointer-events: none;
   }
 
   /* Top Bar Header for All Players Button */
@@ -41,36 +79,41 @@
     margin-bottom: 12px;
   }
   .all-players-btn {
-    background: rgba(255, 180, 0, 0.15);
-    border: 1px solid #ffb400;
-    color: #ffb400;
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 13px;
+    background: rgba(255, 180, 0, 0.12);
+    border: 1px solid var(--accent-gold);
+    color: var(--accent-gold);
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 12px;
     font-weight: 800;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
-    gap: 6px;
-    box-shadow: 0 0 10px rgba(255, 180, 0, 0.2);
+    gap: 8px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(255, 180, 0, 0.15);
   }
   .all-players-btn:hover {
-    background: #ffb400;
+    background: var(--accent-gold);
     color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--accent-gold-glow);
   }
 
+  /* Header Section - Fixed Overflow & Cut issue */
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid rgba(255, 180, 0, 0.3);
+    border-bottom: 2px solid rgba(255, 180, 0, 0.2);
     padding-bottom: 12px;
     margin-bottom: 20px;
-    gap: 10px;
+    gap: 8px;
+    flex-wrap: wrap; /* Prevents right badge from cutting out */
   }
   .flag-box {
-    width: 70px;
+    width: 50px;
     height: 22px;
     flex-shrink: 0;
     background: linear-gradient(to bottom, #FF9933 33.3%, #FFFFFF 33.3%, #FFFFFF 66.6%, #128807 66.6%);
@@ -78,7 +121,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
   .chakra {
     width: 7px;
@@ -87,41 +131,52 @@
     border-radius: 50%;
   }
   .title {
-    font-size: clamp(22px, 5vw, 30px);
-    font-weight: 900;
-    color: #ffb400;
+    font-family: 'Teko', sans-serif;
+    font-size: clamp(24px, 6vw, 36px);
+    font-weight: 700;
+    color: var(--accent-gold);
     letter-spacing: 2px;
-    text-shadow: 0 0 10px rgba(255, 180, 0, 0.5);
+    text-shadow: 0 0 12px rgba(255, 180, 0, 0.4);
     white-space: nowrap;
+    line-height: 1;
+    flex-shrink: 1;
   }
   .sub-logo {
-    font-size: clamp(11px, 3vw, 13px);
+    font-size: clamp(10px, 2.5vw, 12px);
     font-weight: 800;
-    color: #94a3b8;
+    color: var(--text-muted);
     letter-spacing: 1px;
     white-space: nowrap;
     flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .content {
     display: flex;
-    gap: 20px;
+    gap: 16px;
   }
 
   .avatar-container {
-    width: 200px;
+    width: 170px;
     aspect-ratio: 3 / 4;
     height: auto;
-    background: #14141f;
+    background: #10111a;
     border-radius: 14px;
-    border: 2px solid #ffb400;
+    border: 2px solid var(--accent-gold);
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
     overflow: hidden;
     flex-shrink: 0;
-    box-shadow: 0 0 15px rgba(0,0,0,0.8);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7), inset 0 0 10px rgba(0,0,0,0.8);
+    transition: transform 0.3s ease;
+  }
+  .avatar-container:hover {
+    transform: scale(1.02);
   }
   .avatar-container img {
     width: 100%;
@@ -135,12 +190,13 @@
     flex-direction: column;
     justify-content: space-between;
     min-width: 0;
+    gap: 8px;
   }
   .field-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     padding-bottom: 6px;
     gap: 8px;
   }
@@ -149,18 +205,19 @@
     min-width: 0;
   }
   .label {
-    font-size: clamp(10px, 2.5vw, 12px);
+    font-size: 10px;
     font-weight: 800;
-    color: #ffb400;
-    letter-spacing: 1px;
-    margin-bottom: 2px;
+    color: var(--accent-gold);
+    letter-spacing: 0.8px;
+    margin-bottom: 3px;
+    text-transform: uppercase;
   }
   .input-box {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 180, 0, 0.3);
-    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 180, 0, 0.25);
+    border-radius: 8px;
     padding: 6px 10px;
-    font-size: clamp(13px, 3.2vw, 15px);
+    font-size: clamp(12px, 3vw, 14px);
     font-weight: 700;
     color: #ffffff;
     outline: none;
@@ -169,14 +226,14 @@
   }
   .input-box:disabled {
     background: rgba(255, 255, 255, 0.02);
-    border-color: rgba(255, 255, 255, 0.1);
-    color: #94a3b8;
+    border-color: rgba(255, 255, 255, 0.08);
+    color: var(--text-muted);
     cursor: not-allowed;
   }
   .input-box:focus:not(:disabled) {
-    border-color: #ffb400;
-    background: rgba(255, 180, 0, 0.1);
-    box-shadow: 0 0 8px rgba(255, 180, 0, 0.3);
+    border-color: var(--accent-gold);
+    background: rgba(255, 180, 0, 0.08);
+    box-shadow: 0 0 12px rgba(255, 180, 0, 0.25);
   }
   .icon-badge {
     width: 34px;
@@ -187,27 +244,29 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 15px;
+    font-size: 14px;
     flex-shrink: 0;
+    color: var(--accent-gold);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
   }
 
   .footer {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-top: 20px;
-    border-top: 2px solid rgba(255, 180, 0, 0.3);
-    padding-top: 14px;
-    gap: 10px;
+    margin-top: 16px;
+    border-top: 2px solid rgba(255, 180, 0, 0.2);
+    padding-top: 12px;
+    gap: 8px;
   }
   .footer-text {
-    font-size: clamp(12px, 3.5vw, 16px);
+    font-size: clamp(11px, 3vw, 14px);
     font-weight: 900;
     color: #e2e8f0;
     letter-spacing: 1px;
   }
   .footer-text span {
-    color: #ffb400;
+    color: var(--accent-gold);
   }
   .barcode-box {
     text-align: right;
@@ -216,79 +275,81 @@
   .barcode {
     background: #ffffff;
     color: #000000;
-    padding: 4px 10px;
+    padding: 3px 8px;
     border-radius: 4px;
     font-family: monospace;
-    font-size: clamp(13px, 3.5vw, 16px);
+    font-size: clamp(11px, 3vw, 14px);
     font-weight: bold;
     letter-spacing: 2px;
     display: inline-block;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   }
   .barcode-id {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 800;
-    color: #ffb400;
-    margin-top: 4px;
+    color: var(--accent-gold);
+    margin-top: 3px;
+    letter-spacing: 0.5px;
   }
 
   .btn-container {
     display: flex;
-    gap: 12px;
-    margin-top: 20px;
+    gap: 10px;
+    margin-top: 16px;
     flex-wrap: wrap;
   }
 
   .action-btn {
     flex: 1;
-    min-width: 120px;
-    padding: 12px;
+    min-width: 100px;
+    padding: 10px 12px;
     color: #ffffff;
     border: none;
     border-radius: 10px;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 800;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
   }
   .fetch-btn {
-    background: #2563eb;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
   }
   .pdf-btn {
-    background: #059669;
-    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
   }
   .clear-btn {
-    background: #475569;
-    box-shadow: 0 4px 12px rgba(71, 85, 105, 0.4);
-  }
-  .clear-btn:hover {
-    background: #334155;
+    background: linear-gradient(135deg, #475569, #334155);
+    box-shadow: 0 4px 15px rgba(71, 85, 105, 0.35);
   }
   .action-btn:hover {
     transform: translateY(-2px);
-    filter: brightness(1.1);
+    filter: brightness(1.15);
   }
 
   .card-footer {
     text-align: center;
-    padding: 15px 0;
-    margin-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 14px;
+    margin-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .card-footer p {
-    color: #a0a0a0;
-    font-size: 13px;
-    font-weight: 500;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
     letter-spacing: 0.5px;
     margin: 0;
-    font-family: 'Poppins', sans-serif;
   }
 
-  /* ===== Modal Styling (Player List) ===== */
+  /* ===== Glassmorphism Modal Styling (Player List) ===== */
   .modal-overlay {
     position: fixed;
     top: 0;
@@ -296,127 +357,159 @@
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
     display: none;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    padding: 15px;
+    padding: 12px;
   }
   .modal-overlay.active {
     display: flex;
   }
   .modal-box {
-    background: #14141f;
-    border: 2px solid #ffb400;
+    background: #12131d;
+    border: 2px solid var(--accent-gold);
     border-radius: 16px;
     width: 100%;
-    max-width: 450px;
-    max-height: 80vh;
+    max-width: 460px;
+    max-height: 85vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 0 30px rgba(255, 180, 0, 0.3);
+    box-shadow: 0 0 35px rgba(255, 180, 0, 0.25);
     overflow: hidden;
   }
   .modal-header {
-    padding: 15px;
-    background: rgba(255, 180, 0, 0.1);
-    border-bottom: 1px solid rgba(255, 180, 0, 0.3);
+    padding: 14px 16px;
+    background: rgba(255, 180, 0, 0.08);
+    border-bottom: 1px solid rgba(255, 180, 0, 0.2);
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   .modal-header h3 {
     margin: 0;
-    color: #ffb400;
-    font-size: 18px;
+    color: var(--accent-gold);
+    font-size: 15px;
     font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
   .close-btn {
-    background: transparent;
-    border: none;
-    color: #ff5050;
-    font-size: 22px;
+    background: rgba(255, 42, 42, 0.15);
+    border: 1px solid rgba(255, 42, 42, 0.3);
+    color: var(--accent-red);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 12px;
     font-weight: bold;
     cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .close-btn:hover {
+    background: var(--accent-red);
+    color: #fff;
   }
   
   /* Modal Search Bar */
   .modal-search-box {
-    padding: 12px 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.2);
   }
   .modal-search-input {
     width: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid #ffb400;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 8px 12px;
     color: #fff;
     font-weight: 600;
     outline: none;
-    font-size: 14px;
+    font-size: 13px;
+    transition: all 0.3s ease;
   }
   .modal-search-input:focus {
-    box-shadow: 0 0 8px rgba(255, 180, 0, 0.4);
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 10px rgba(255, 180, 0, 0.25);
+    background: rgba(255, 180, 0, 0.05);
   }
 
   .player-list {
-    padding: 15px;
+    padding: 12px 14px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
   .player-item {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 10px 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
   }
   .player-item:hover {
-    background: rgba(255, 180, 0, 0.15);
-    border-color: #ffb400;
+    background: rgba(255, 180, 0, 0.12);
+    border-color: var(--accent-gold);
+    transform: translateX(3px);
   }
   .p-name {
     font-weight: 700;
     color: #fff;
-    font-size: 15px;
+    font-size: 13px;
   }
   .p-uid {
-    font-size: 12px;
-    color: #ffb400;
-    font-weight: 600;
+    font-size: 11px;
+    color: var(--accent-gold);
+    font-weight: 700;
+    background: rgba(255, 180, 0, 0.1);
+    padding: 3px 6px;
+    border-radius: 5px;
   }
 
-  @media (max-width: 520px) {
+  /* Extreme Mobile Optimization */
+  @media (max-width: 480px) {
+    body {
+      padding: 8px; /* Strict 8px container padding */
+    }
     .card {
-      padding: 16px;
+      padding: 14px;
+    }
+    .header {
+      gap: 6px;
+    }
+    .sub-logo {
+      padding: 4px 8px;
+      font-size: 10px;
     }
     .content {
       flex-direction: column;
       align-items: center;
+      gap: 14px;
     }
     .avatar-container {
-      width: 160px;
+      width: 150px;
     }
     .details {
       width: 100%;
-      gap: 10px;
     }
     .footer {
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
-      text-align: center;
-      gap: 10px;
+      text-align: left;
     }
     .barcode-box {
-      text-align: center;
+      text-align: right;
     }
     .btn-container {
       flex-direction: column;
@@ -429,7 +522,9 @@
 <div class="card" id="playerCardContainer">
   <!-- Top Bar for All Players Option -->
   <div class="top-bar" data-html2pdf-ignore="true">
-    <button type="button" class="all-players-btn" onclick="openPlayerList()">👥 ALL PLAYERS</button>
+    <button type="button" class="all-players-btn" onclick="openPlayerList()">
+      <i class="fa-solid fa-users"></i> ALL PLAYERS
+    </button>
   </div>
 
   <!-- Header -->
@@ -454,7 +549,7 @@
           <div class="label">PLAYER NAME:</div>
           <input type="text" class="input-box" id="input-name" value="" placeholder="Search by UID..." disabled>
         </div>
-        <div class="icon-badge">🏆</div>
+        <div class="icon-badge"><i class="fa-solid fa-trophy"></i></div>
       </div>
 
       <div class="field-row">
@@ -462,7 +557,7 @@
           <div class="label">UID (ENTER TO SEARCH):</div>
           <input type="text" class="input-box" id="input-uid" value="" placeholder="Enter UID here" oninput="updateBarcode(this.value)">
         </div>
-        <div class="icon-badge">🛡️</div>
+        <div class="icon-badge"><i class="fa-solid fa-shield-halved"></i></div>
       </div>
 
       <div class="field-row">
@@ -470,7 +565,7 @@
           <div class="label">GUILD NAME:</div>
           <input type="text" class="input-box" id="input-guild" value="" placeholder="---" disabled>
         </div>
-        <div class="icon-badge">⚔️</div>
+        <div class="icon-badge"><i class="fa-solid fa-crosshairs"></i></div>
       </div>
 
       <div class="field-row">
@@ -478,7 +573,7 @@
           <div class="label">REGION:</div>
           <input type="text" class="input-box" id="input-region" value="" placeholder="---" disabled>
         </div>
-        <div class="icon-badge">🇮🇳</div>
+        <div class="icon-badge"><i class="fa-solid fa-globe"></i></div>
       </div>
 
       <div class="field-row">
@@ -486,7 +581,7 @@
           <div class="label">LEVEL:</div>
           <input type="text" class="input-box" id="input-level" value="" placeholder="---" disabled>
         </div>
-        <div class="icon-badge">⭐</div>
+        <div class="icon-badge"><i class="fa-solid fa-star"></i></div>
       </div>
 
       <div class="field-row">
@@ -494,7 +589,7 @@
           <div class="label">ELITE PASS:</div>
           <input type="text" class="input-box" id="input-pass" value="" placeholder="---" disabled>
         </div>
-        <div class="icon-badge">👑</div>
+        <div class="icon-badge"><i class="fa-solid fa-crown"></i></div>
       </div>
     </div>
   </div>
@@ -504,6 +599,7 @@
     <div class="footer-text">
       MY <span>FREE FIRE</span> IDENTITY
     </div>
+<br>
     <div class="barcode-box">
       <div class="barcode">|||| ||| ||||| |||</div>
       <div class="barcode-id" id="barcode-text">FFID-</div>
@@ -512,14 +608,20 @@
 
   <!-- Action Buttons Container -->
   <div class="btn-container" data-html2pdf-ignore="true">
-    <button type="button" class="action-btn fetch-btn" onclick="fetchFromDatabase()">FETCH DATA</button>
-    <button type="button" class="action-btn pdf-btn" onclick="downloadCardPDF()">DOWNLOAD PDF</button>
-    <button type="button" class="action-btn clear-btn" onclick="clearCardForm()">CLEAR</button>
+    <button type="button" class="action-btn fetch-btn" onclick="fetchFromDatabase()">
+      <i class="fa-solid fa-download"></i> FETCH DATA
+    </button>
+    <button type="button" class="action-btn pdf-btn" onclick="downloadCardPDF()">
+      <i class="fa-solid fa-file-pdf"></i> DOWNLOAD PDF
+    </button>
+    <button type="button" class="action-btn clear-btn" onclick="clearCardForm()">
+      <i class="fa-solid fa-rotate-right"></i> CLEAR
+    </button>
   </div>
 
   <!-- Footer Section -->
   <footer class="card-footer">
-    <p>© Copyright by Zahid &amp; Created by Zahid</p>
+    <p>© Copyright &amp; Created by Zahid</p>
   </footer>
 </div>
 
@@ -527,7 +629,7 @@
 <div class="modal-overlay" id="playerModal">
   <div class="modal-box">
     <div class="modal-header">
-      <h3>👥 ALL PLAYERS LIST</h3>
+      <h3><i class="fa-solid fa-users-viewfinder"></i> ALL PLAYERS LIST</h3>
       <button class="close-btn" onclick="closePlayerList()">✕</button>
     </div>
     
@@ -537,7 +639,7 @@
     </div>
 
     <div class="player-list" id="modal-player-list">
-      <p style="text-align: center; color: #a0a0a0;">Loading players...</p>
+      <p style="text-align: center; color: var(--text-muted);">Loading players...</p>
     </div>
   </div>
 </div>
@@ -597,6 +699,7 @@
   }
 
   // ADVANCED PDF DOWNLOAD FUNCTION
+
   async function downloadCardPDF() {
     const cardElement = document.getElementById('playerCardContainer');
     const playerName = document.querySelectorAll('.input-box')[0].value || 'Player';
@@ -652,9 +755,9 @@
       container.style.zIndex = '99999';
 
       if (position === 'left') {
-        container.style.left = '25px';
+        container.style.left = '55px';
       } else {
-        container.style.right = '25px';
+        container.style.right = '55px';
       }
 
       const redGlow = document.createElement('div');
@@ -733,11 +836,12 @@
     });
   }
 
+
   async function openPlayerList() {
     document.getElementById('playerModal').classList.add('active');
     document.getElementById('modalSearchInput').value = '';
     const listContainer = document.getElementById('modal-player-list');
-    listContainer.innerHTML = '<p style="text-align: center; color: #a0a0a0;">Loading players...</p>';
+    listContainer.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Loading players...</p>';
 
     const API_URL = `https://ff-player-card.onrender.com/api/players`;
 
@@ -754,11 +858,11 @@
         allPlayersData = result.data; 
         renderPlayerList(allPlayersData);
       } else {
-        listContainer.innerHTML = '<p style="text-align: center; color: #a0a0a0;">Database me koi player nahi mila!</p>';
+        listContainer.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Database me koi player nahi mila!</p>';
       }
     } catch (error) {
       console.error('FETCH PLAYERS ERROR:', error);
-      listContainer.innerHTML = `<p style="text-align: center; color: #ff5050;">Failed to load player list!<br><small>(${error.message})</small></p>`;
+      listContainer.innerHTML = `<p style="text-align: center; color: var(--accent-red);">Failed to load player list!<br><small>(${error.message})</small></p>`;
     }
   }
 
@@ -767,7 +871,7 @@
     listContainer.innerHTML = '';
 
     if (players.length === 0) {
-      listContainer.innerHTML = '<p style="text-align: center; color: #a0a0a0;">Koi matching player nahi mila!</p>';
+      listContainer.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Koi matching player nahi mila!</p>';
       return;
     }
 
