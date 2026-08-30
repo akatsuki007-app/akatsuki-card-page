@@ -28,6 +28,11 @@ const playerSchema = new mongoose.Schema({
 
 const Player = mongoose.model('Player', playerSchema);
 
+app.get('/', (req, res) => {
+    res.send('Server is running successfully!');
+});
+
+
 // 1. SAVE / UPDATE PLAYER API
 app.post('/api/player/save', async (req, res) => {
   try {
